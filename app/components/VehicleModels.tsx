@@ -44,20 +44,20 @@ export default function VehicleModels({ makeId, year }: { makeId: string; year: 
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-center">Models for {models[0]?.Make_Name} in {year}</h2>
-        <Link href="/" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105">
+    <div className="w-full max-w-6xl mx-auto p-8 bg-background">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-bold text-primary">Models for {models[0]?.Make_Name} in {year}</h2>
+        <Link href="/" className="btn-primary">
           Back to Home
         </Link>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {models.map((model) => (
-          <div key={model.Model_ID} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-            <div className="p-4">
-              <h3 className="text-xl font-semibold mb-2 text-red-950">{model.Model_Name} (id:{model.Model_ID})</h3>
-              <p className="text-gray-600">Make: {model.Make_Name}</p>
-              <p className="text-gray-600">Make ID: {model.Make_ID}</p>
+          <div key={model.Model_ID} className="card hover:bg-card-hover">
+            <div className="p-6">
+              <h3 className="text-xl font-semibold mb-2 text-primary">{model.Model_Name}</h3>
+              <p className="text-foreground">Make: {model.Make_Name}</p>
+              <p className="text-foreground">Model ID: {model.Model_ID}</p>
             </div>
           </div>
         ))}

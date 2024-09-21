@@ -3,25 +3,69 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #3498db;
+  --secondary: #2ecc71;
+  --background: #f5f7fa;
+  --foreground: #2c3e50;
+  --card-bg: #ffffff;
+  --card-hover: #ecf0f1;
+  --primary-dark: #2980b9;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --primary: #3498db;
+    --secondary: #2ecc71;
+    --background: #2c3e50;
+    --foreground: #ecf0f1;
+    --card-bg: #34495e;
+    --card-hover: #2c3e50;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Geist Sans', Arial, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out;
+  }
+
+  .card {
+    @apply bg-card-bg rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ease-in-out;
+  }
+
+  .input {
+    @apply w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .bg-primary {
+    background-color: var(--primary);
+  }
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+  .bg-card-bg {
+    background-color: var(--card-bg);
+  }
+  .bg-card-hover {
+    background-color: var(--card-hover);
+  }
+  .text-primary {
+    color: var(--primary);
+  }
+  .text-secondary {
+    color: var(--secondary);
+  }
+  .bg-primary-dark {
+    background-color: var(--primary-dark);
+  }
+  .hover\:bg-primary-dark:hover {
+    background-color: var(--primary-dark);
   }
 }
