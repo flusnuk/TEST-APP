@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 
 interface Make {
-    MakeId: number;
-    MakeName: string;
-    VehicleTypeId: number,
-    VehicleTypeName: string
+  MakeId: number;
+  MakeName: string;
+  VehicleTypeId: number;
+  VehicleTypeName: string;
 }
 
 interface Props {
@@ -14,26 +14,42 @@ interface Props {
   setSelectedMake: (make: string) => void;
 }
 
-export default function VehicleMakeSelector({ selectedMake, setSelectedMake }: Props) {
+function useMakes() {
   const [makes, setMakes] = useState<Make[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    fetch('https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json')
-      .then(response => response.json())
-      .then(data => {
+    async function fetchMakes() {
+      try {
+        const response = await fetch('https://vpic.nhtsa.dot.gov/api/vehicles/GetMakesForVehicleType/car?format=json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
         setMakes(data.Results);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'An error occurred while fetching vehicle makes.');
+      } finally {
         setIsLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching vehicle makes:', error);
-        setIsLoading(false);
-      });
+      }
+    }
+
+    fetchMakes();
   }, []);
+
+  return { makes, isLoading, error };
+}
+
+export default function VehicleMakeSelector({ selectedMake, setSelectedMake }: Props) {
+  const { makes, isLoading, error } = useMakes();
 
   if (isLoading) {
     return <div className="animate-pulse h-10 bg-gray-200 rounded"></div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">Error: {error}</div>;
   }
 
   return (
@@ -48,8 +64,8 @@ export default function VehicleMakeSelector({ selectedMake, setSelectedMake }: P
         onChange={(e) => setSelectedMake(e.target.value)}
       >
         <option value="">Select a make</option>
-        {makes.map((make, index) => (
-          <option key={`${make.MakeId}-${index}`} value={make.MakeId.toString()}>
+        {makes.map((make) => (
+          <option key={make.MakeId} value={make.MakeId.toString()}>
             {make.MakeName}
           </option>
         ))}

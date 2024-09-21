@@ -11,16 +11,20 @@ interface VehicleModel {
   Model_Name: string;
 }
 
-function fetchVehicleModels(makeId: string, year: string) {
-  return fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeIdYear/makeId/${makeId}/modelyear/${year}?format=json`)
-    .then(response => response.json())
-    .then(data => {
-      if (data.Results && data.Results.length > 0) {
-        return data.Results;
-      } else {
-        throw new Error('No models found for the selected make and year.');
-      }
-    });
+interface VehicleModelResponse {
+  Results: VehicleModel[];
+}
+
+async function fetchVehicleModels(makeId: string, year: string): Promise<VehicleModel[]> {
+  const response = await fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeIdYear/makeId/${makeId}/modelyear/${year}?format=json`);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data: VehicleModelResponse = await response.json();
+  if (!data.Results || data.Results.length === 0) {
+    throw new Error('No models found for the selected make and year.');
+  }
+  return data.Results;
 }
 
 function ModelList({ makeId, year }: { makeId: string; year: string }) {
@@ -35,7 +39,7 @@ function ModelList({ makeId, year }: { makeId: string; year: string }) {
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {models.map((model: VehicleModel) => (
+        {models.map((model) => (
           <div key={model.Model_ID} className="card hover:bg-card-hover">
             <div className="p-6">
               <h3 className="text-xl font-semibold mb-2 text-primary">{model.Model_Name}</h3>
