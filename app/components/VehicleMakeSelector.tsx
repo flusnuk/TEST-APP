@@ -33,21 +33,21 @@ export default function VehicleMakeSelector({ selectedMake, setSelectedMake }: P
   }, []);
 
   if (isLoading) {
-    return <div>Loading vehicle makes...</div>;
+    return <div className="animate-pulse h-10 bg-gray-200 rounded"></div>;
   }
 
   return (
     <div>
       <label htmlFor="make-select" className="block text-sm font-medium text-foreground mb-2">
-        Select a vehicle make
+        Vehicle Make
       </label>
       <select
         id="make-select"
-        className="input"
+        className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
         value={selectedMake}
         onChange={(e) => setSelectedMake(e.target.value)}
       >
-        <option value="">All makes</option>
+        <option value="">Select a make</option>
         {makes.map((make, index) => (
           <option key={`${make.MakeId}-${index}`} value={make.MakeId.toString()}>
             {make.MakeName}

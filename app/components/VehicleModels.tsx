@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
+import { use } from 'react';
 
 interface VehicleModel {
   Make_ID: number;
@@ -10,38 +11,20 @@ interface VehicleModel {
   Model_Name: string;
 }
 
-export default function VehicleModels({ makeId, year }: { makeId: string; year: string }) {
-  const [models, setModels] = useState<VehicleModel[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+function fetchVehicleModels(makeId: string, year: string) {
+  return fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeIdYear/makeId/${makeId}/modelyear/${year}?format=json`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.Results && data.Results.length > 0) {
+        return data.Results;
+      } else {
+        throw new Error('No models found for the selected make and year.');
+      }
+    });
+}
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetch(`https://vpic.nhtsa.dot.gov/api/vehicles/GetModelsForMakeIdYear/makeId/${makeId}/modelyear/${year}?format=json`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.Results && data.Results.length > 0) {
-          setModels(data.Results);
-        } else {
-          setError('No models found for the selected make and year.');
-        }
-      })
-      .catch(err => {
-        console.error('Error fetching vehicle models:', err);
-        setError('An error occurred while fetching vehicle models. Please try again later.');
-      })
-      .finally(() => setIsLoading(false));
-  }, [makeId, year]);
-
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
-    </div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500 text-center p-4">{error}</div>;
-  }
+function ModelList({ makeId, year }: { makeId: string; year: string }) {
+  const models = use(fetchVehicleModels(makeId, year));
 
   return (
     <div className="w-full max-w-6xl mx-auto p-8 bg-background">
@@ -52,7 +35,7 @@ export default function VehicleModels({ makeId, year }: { makeId: string; year: 
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {models.map((model) => (
+        {models.map((model: VehicleModel) => (
           <div key={model.Model_ID} className="card hover:bg-card-hover">
             <div className="p-6">
               <h3 className="text-xl font-semibold mb-2 text-primary">{model.Model_Name}</h3>
@@ -63,5 +46,15 @@ export default function VehicleModels({ makeId, year }: { makeId: string; year: 
         ))}
       </div>
     </div>
+  );
+}
+
+export default function VehicleModels({ makeId, year }: { makeId: string; year: string }) {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+    </div>}>
+      <ModelList makeId={makeId} year={year} />
+    </Suspense>
   );
 }

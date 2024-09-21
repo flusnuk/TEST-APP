@@ -1,5 +1,5 @@
 import VehicleModels from '../../../components/VehicleModels';
-
+import { Suspense } from 'react';
 
 export async function generateStaticParams() {
   const currentYear = new Date().getFullYear();
@@ -23,9 +23,9 @@ const Page = ({ params }: { params: { makeid: string; year: string } }) => {
   const { makeid, year } = params;
 
   return (
-    <div>
+    <Suspense fallback={<div>Loading...</div>}>
       <VehicleModels makeId={makeid} year={year} />
-    </div>
+    </Suspense>
   );
 };
 
