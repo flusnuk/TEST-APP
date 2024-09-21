@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import VehicleMakeSelector from './components/VehicleMakeSelector';
 import ModelYearSelector from './components/ModelYearSelector';
+import Footer from './components/Footer';
 
 export default function Home() {
   const [selectedMake, setSelectedMake] = useState('');
@@ -18,25 +19,30 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold mb-8">Car Dealer Application</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
-        <VehicleMakeSelector
-          selectedMake={selectedMake}
-          setSelectedMake={setSelectedMake}
-        />
-        <ModelYearSelector
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={!selectedMake || !selectedYear}
-        >
-          Next
-        </button>
-      </form>
-    </main>
+    <div className="flex flex-col min-h-screen bg-background">
+      <main className="flex-grow flex flex-col items-center justify-center p-8">
+        <div className="w-full max-w-md bg-card-bg p-8 rounded-lg shadow-lg">
+          <h1 className="text-4xl font-bold mb-8 text-center text-primary">Car Dealer App</h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <VehicleMakeSelector
+              selectedMake={selectedMake}
+              setSelectedMake={setSelectedMake}
+            />
+            <ModelYearSelector
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+            />
+            <button
+              type="submit"
+              className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!selectedMake || !selectedYear}
+            >
+              Find Models
+            </button>
+          </form>
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 }
